@@ -1,0 +1,62 @@
+name: POJA Import CI
+
+on:
+  push:
+    branches:
+      - importer/e24e83f4-3212-49ea-8966-8ac0261c9031
+
+env:
+  ORG_ID: 107abe9e-ac83-4973-9fd1-df8b5354503b
+  IMPORT_ID: e24e83f4-3212-49ea-8966-8ac0261c9031
+
+jobs:
+  pre-transformation-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    env:
+      
+
+    steps:
+      - uses: actions/checkout@v4.1.6
+
+      - uses: actions/setup-java@v4.2.1
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Run Gradle tests
+        id: gradle
+        if: hashFiles('**/build.gradle') != ''
+        run: gradle test
+
+      - name: Run Maven tests
+        id: maven
+        if: hashFiles('**/pom.xml') != ''
+        run: mvn test
+
+      - name: Report test outcome
+        if: always()
+        run: |
+          if [[ "${{ steps.gradle.outcome }}" == "failure" || "${{ steps.maven.outcome }}" == "failure" ]]; then
+            OUTCOME="FAILURE"
+          elif [[ "${{ steps.gradle.outcome }}" == "success" || "${{ steps.maven.outcome }}" == "success" ]]; then
+            OUTCOME="SUCCESS"
+          fi
+
+          RUN_ID="${{ github.run_id }}"
+          ATTEMPT_NUMBER="${{ github.run_attempt }}"
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="$(echo '${{ github.repository }}' | cut -d'/' -f2)"
+          
+          curl --fail -X POST "https://api.preprod.poja.io/orgs/${{ env.ORG_ID }}/imports/${{ env.IMPORT_ID }}/states" \
+            -H "Authorization: AppBearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+                  --arg job_name "PRE_TRANSFORMATION_TEST" \
+                  --arg job_status "$OUTCOME" \
+                  --arg run_id "$RUN_ID" \
+                  --arg repo_owner "$REPO_OWNER" \
+                  --arg repo_name "$REPO_NAME" \
+                  --arg attempt_nb "$ATTEMPT_NUMBER" \
+                  '{ job_name: $job_name, job_status: $job_status, run_id: $run_id, repo_owner: $repo_owner, repo_name: $repo_name, attempt_nb: $attempt_nb }')"
