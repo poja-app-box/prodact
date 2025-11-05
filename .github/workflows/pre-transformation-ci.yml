@@ -29,6 +29,7 @@ jobs:
         run: |
           set -o pipefail
           if [ -f "build.gradle" ]; then
+            chmod +x gradlew
             ./gradlew test
           elif [ -f "pom.xml" ]; then
             mvn test
