@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - import/a10bc01f-8002-4630-8413-879babc52a0f
-
 env:
   ORG_ID: 107abe9e-ac83-4973-9fd1-df8b5354503b
   IMPORT_ID: a10bc01f-8002-4630-8413-879babc52a0f
@@ -29,9 +28,11 @@ jobs:
         run: |
           set -o pipefail
           if [ -f "build.gradle" ]; then
-            gradle test
+            chmod +x gradlew
+            ./gradlew test
           elif [ -f "pom.xml" ]; then
-            mvn test
+            chmod +x mvnw
+            mvnw test
           else
             echo "No build tool detected!" >&2
             exit 1
