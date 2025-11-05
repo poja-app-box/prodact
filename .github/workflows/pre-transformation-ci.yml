@@ -48,6 +48,8 @@ jobs:
           
       - name: Update import state
         run: |
+          REPO_NAME=$(basename "${GITHUB_REPOSITORY}")
+      
           curl --fail -X POST "https://api.preprod.poja.io/orgs/${{ env.ORG_ID }}/imports/${{ env.IMPORT_ID }}/states" \
             -H "Authorization: AppBearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
@@ -57,5 +59,5 @@ jobs:
                   --arg run_id "${{ github.run_id }}" \
                   --arg attempt_nb "${{ github.run_attempt }}" \
                   --arg repo_owner "${{ github.repository_owner }}" \
-                  --arg repo_name "${{ github.repository.split('/')[1] }}" \
+                  --arg repo_name "$REPO_NAME" \
                   '{ job_name: $job_name, job_status: $job_status, run_id: $run_id, attempt_nb: $attempt_nb, repo_owner: $repo_owner, repo_name: $repo_name }')"
