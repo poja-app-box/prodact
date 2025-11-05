@@ -50,12 +50,21 @@ jobs:
         run: |
           OUTCOME="${{ steps.test.outputs.outcome }}"
           RUN_ID="${{ github.run_id }}"
+          ATTEMPT_NB="${{ github.run_attempt }}"
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.repository.split('/')[1] }}"
 
+
+      - name: Update import state
+        run: |
           curl --fail -X POST "https://api.preprod.poja.io/orgs/${{ env.ORG_ID }}/imports/${{ env.IMPORT_ID }}/states" \
             -H "Authorization: AppBearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d "$(jq -n \
                   --arg job_name "PRE_TRANSFORMATION_TEST" \
-                  --arg job_outcome "$OUTCOME" \
-                  --arg run_id "$RUN_ID" \
-                  '{ job_name: $job_name, job_outcome: $job_outcome, run_id: $run_id }')"
+                  --arg job_status "${{ steps.test.outputs.outcome }}" \
+                  --arg run_id "${{ github.run_id }}" \
+                  --arg attempt_nb "${{ github.run_attempt }}" \
+                  --arg repo_owner "${{ github.repository_owner }}" \
+                  --arg repo_name "${{ github.repository.split('/')[1] }}" \
+                  '{ job_name: $job_name, job_status: $job_status, run_id: $run_id, attempt_nb: $attempt_nb, repo_owner: $repo_owner, repo_name: $repo_name }')"
