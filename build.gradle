@@ -20,6 +20,7 @@ jacoco {
 
 
 repositories {
+mavenCentral()
 
     mavenCentral()
 }
@@ -144,6 +145,32 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter:1.19.1'
     testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 
+annotationProcessor 'org.projectlombok:lombok'
+compileOnly 'org.projectlombok:lombok'
+implementation 'org.springframework.boot:spring-boot-starter-web'
+implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.1.0'
+implementation 'software.amazon.awssdk:aws-query-protocol:2.20.26'
+implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
+implementation 'com.amazonaws:aws-lambda-java-events:3.11.3'
+implementation 'software.amazon.awssdk:sqs:2.21.40'
+implementation 'software.amazon.awssdk:eventbridge:2.21.40'
+implementation 'software.amazon.awssdk.crt:aws-crt:0.28.12'
+implementation 'software.amazon.awssdk:ses:2.21.40'
+implementation 'software.amazon.awssdk:core:2.21.40'
+implementation 'jakarta.mail:jakarta.mail-api:2.1.2'
+implementation 'jakarta.activation:jakarta.activation-api:2.1.2'
+implementation 'com.sun.mail:jakarta.mail:2.0.1'
+implementation 'com.sun.activation:jakarta.activation:2.0.1'
+implementation 'org.apache.tika:tika-core:2.9.1'
+implementation 'org.reflections:reflections:0.10.2'
+implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+implementation 'io.swagger:swagger-annotations:1.6.12'
+testAnnotationProcessor 'org.projectlombok:lombok'
+testCompileOnly 'org.projectlombok:lombok'
+testImplementation 'org.springframework.boot:spring-boot-starter-test'
+testImplementation 'org.testcontainers:junit-jupiter:1.19.1'
+testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 
 
 }
