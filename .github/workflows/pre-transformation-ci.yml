@@ -32,7 +32,7 @@ jobs:
             chmod +x gradlew
             ./gradlew test
           elif [ -f "pom.xml" ]; then
-            chmod +x gradlew
+            chmod +x mvnw
             mvnw test
           else
             echo "No build tool detected!" >&2
